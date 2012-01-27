@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<title>CAM Example</title>
+		<meta name="description" content="" />
+		<meta name="author" content="JFisher" />
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	</head>
+	<body>
+		<script src="lib/FU.js" type=text/javascript></script>
+		<script src="../src/CAM.js" type=text/javascript></script>
+		<div>
+			<header>
+				<h1>Client Asset Manager (CAM) Example</h1>
+			</header>
+			<nav>
+				<p>
+					This example demonstrates usage of CAM. On initialization CAM will Load all Assets in 
+					the asset.josn file via XHR request, download the assets to the local file system and 
+					finally load one of the files from the local filesystem.
+				</p>
+				<input type="button" value="Run Example" onClick="run();">
+					<script type="text/javascript">
+						function run(){
+							//Define the Filesystem data
+							FU.LocalRoot = "CAMExample";
+							FU.PersistantSize = 157286400;
+							
+							//Define Configuration File
+							CAM.AssetConfig = "assets.json";
+							CAM.VersionAsset = "version.json";
+							
+							//Define Asset Paths
+							CAM.LocalRootPath = "/assets/";
+							CAM.RemoteRootPath = "assets/";
+							
+							function initialized(){
+								//CAM has initialized successfully. You could start
+								//iterating through the CAM.Assets variable to see 
+								//which files are ready to be loaded.
+								document.write("CAM initialized successfully");
+							}
+							
+							function assetsLoaded(){
+								//ALL assets are finished loading. All of your
+								//assets are now available for loading from
+								//the local filesystem.
+								document.write("</br></br>All Assets have been successfully downloaded and saved to the local filesystem.");
+								
+								//The filetype should always be Binary unless you are trying to explicitlly 
+								//read text. This variable is only used on XHR requests (remote files) 
+								//and reading of text data.
+								CAM.Load({
+									assetName: "octocat.png",
+									returnType: "url",
+									fileType: FU.FILE_TYPE.BINARY, 
+									callback: function(url){
+										document.write("</br></br><img src=" + url +" />");
+										document.write("</br></br>If you are seeing the github Octocat above the example was successfull!");
+									}
+								});
+							}
+							
+							CAM.Initialize(initialized, assetsLoaded);
+						}
+					</script>
+			</nav>
+			<div></div>
+			<footer>
+			</footer>
+		</div>
+	</body>
+</html>

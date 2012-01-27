@@ -1,0 +1,12 @@
+{
+	"images": {
+		"Files": [
+				{"Filename": "GitHub.svg", "binary": true},
+				{"Filename": "octocat.png", "binary": true}
+			],
+		"mydir1": {
+		},
+		"mydir2": {
+		}
+	}
+}
