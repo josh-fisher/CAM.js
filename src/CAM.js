@@ -12,6 +12,7 @@
 	
 	CAM.Assets = [];
 	CAM.Directories = [];
+	CAM.Initialized = false;
 
 	
 	/**********************************************************************************************************************
@@ -24,14 +25,16 @@
 			FU.InitLocalFileSystem(function initialized(){				
 				//Load Remote Assets
 				if(assetsLoadedCallback){
-					initializedCallback();
 					LoadAssets(assetsLoadedCallback);
+					CAM.Initialized = true;
+					initializedCallback();
 				}
 				else{
 					LoadAssets(initializedCallback);
 				}
 			});
 		}else{
+			CAM.Initialized = true;
 			initializedCallback();
 			
 			//Load Remote Asset Configuration File (Json file)
@@ -251,46 +254,81 @@
 		//		and return either a local or remote path.
 		
 		var filepath = undefined;
-		$.each(CAM.Assets, function(index, value) { 
+		for (var i=0; i < CAM.Assets.length; i++) {
+			var index = i;
+			var value = CAM.Assets[index];
 			var fileNameIndex = -1
 			if(value.Filename.indexOf(filename) !== -1)
 				fileNameIndex = index;
 				
 			if(fileNameIndex >= 0){
 				filepath = CAM.RemoteRootPath.concat(value.Filename);
-				return true;
+				break;
 			}
-		});
+		};
 		
 		return filepath;
 	}
 	
 	CAM.Load = function(params){
-		var assetName, returnType, fileType, callback;
+		var assetName, file, returnType, fileType, callback;
 		assetName = params.assetName;
 		returnType = params.returnType;
 		fileType = params.fileType;
+		sliceParams = params.sliceParams;
+		file = params.file;
 		callback = params.callback;
 		
 		if(FU.CLIENT_FEATURES.FilesystemAPI){
+			if(file){
+				FU.LoadFile({
+			        fileType: fileType,
+			        loadMechanism: FU.LOAD_MECHANISM.FILE,
+			        file: file,
+			        returnType: returnType,
+			        temporary: false,
+			        sliceParams: sliceParams,
+			        loaded: callback
+			    });
+			}
+			else{
+				FU.LoadFile({
+			        fileType: fileType,
+			        loadMechanism: FU.LOAD_MECHANISM.FILESYSTEM,
+			        fileName: assetName,
+			        returnType: returnType,
+			        temporary: false,
+			        sliceParams: sliceParams,
+			        loaded: callback
+			    });
+			}
+		}
+		else if(FU.CLIENT_FEATURES.FileAPI){
 			FU.LoadFile({
 		        fileType: fileType,
-		        loadMechanism: FU.LOAD_MECHANISM.FILESYSTEM,
-		        fileName: assetName,
+		        loadMechanism: FU.LOAD_MECHANISM.FILE,
+		        file: file,
 		        returnType: returnType,
 		        temporary: false,
+		        sliceParams: sliceParams,
 		        loaded: callback
 		    });
 		}
 		else{
 			var remoteURL = CAM.GetPathFromFilename(assetName);
 			
-			FU.LoadFile({
-		        fileType: fileType,
-		        loadMechanism: FU.LOAD_MECHANISM.XHR,
-		        remoteURL: remoteURL,
-		        loaded: callback
-		    });
+			if(params.returnType && returnType === "url"){
+				callback(remoteURL);
+			}
+			else{
+				FU.LoadFile({
+			        fileType: fileType,
+			        loadMechanism: FU.LOAD_MECHANISM.XHR,
+			        remoteURL: remoteURL,
+			        sliceParams: sliceParams,
+			        loaded: callback
+			    });
+			}
 		}
 	}
 	

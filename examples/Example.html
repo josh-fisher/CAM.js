@@ -25,6 +25,7 @@
 					the asset.josn file via XHR request, download the assets to the local file system and 
 					finally load one of the files from the local filesystem.
 				</p>
+				<div id="main"></div>
 				<input type="button" value="Run Example" onClick="run();">
 					<script type="text/javascript">
 						function run(){
@@ -44,14 +45,16 @@
 								//CAM has initialized successfully. You could start
 								//iterating through the CAM.Assets variable to see 
 								//which files are ready to be loaded.
-								document.write("CAM initialized successfully");
+								var mainDiv = document.getElementById("main");
+								mainDiv.innerHTML = "CAM initialized successfully";
 							}
 							
 							function assetsLoaded(){
 								//ALL assets are finished loading. All of your
 								//assets are now available for loading from
 								//the local filesystem.
-								document.write("</br></br>All Assets have been successfully downloaded and saved to the local filesystem.");
+								var mainDiv = document.getElementById("main");
+								mainDiv.innerHTML += "</br></br>All Assets have been successfully downloaded and saved to the local filesystem.";
 								
 								//The filetype should always be Binary unless you are trying to explicitlly 
 								//read text. This variable is only used on XHR requests (remote files) 
@@ -61,8 +64,8 @@
 									returnType: "url",
 									fileType: FU.FILE_TYPE.BINARY, 
 									callback: function(url){
-										document.write("</br></br><img src=" + url +" />");
-										document.write("</br></br>If you are seeing the github Octocat above the example was successfull!");
+										mainDiv.innerHTML += ("</br></br><img src=" + url +" />");
+										mainDiv.innerHTML += ("</br></br>If you are seeing the github Octocat above the example was successfull!");
 									}
 								});
 							}
