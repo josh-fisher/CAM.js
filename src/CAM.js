@@ -228,7 +228,7 @@
 
 		    	if(assetProp !== "Files"){
 		    		//Set Path
-		    		var newPath = path + "/" + assetProp;
+		    		var newPath = path + assetProp + "/";
 		    	
 		    		//Push Path
 		    		CAM.Directories.push(newPath);
@@ -239,7 +239,7 @@
 		    	else{
 		    		for (var i=0; i < assetObj.length; i++) {
 		    			var fileName = assetObj[i].Filename;
-		    			var tmpPath = path + "/" + fileName;
+		    			var tmpPath = path + fileName;
 		    			assetObj[i].Filename = tmpPath;
 		    			CAM.Assets.push(assetObj[i]);
 					};
@@ -303,7 +303,7 @@
 			    });
 			}
 		}
-		else if(FU.CLIENT_FEATURES.FileAPI){
+		else if(FU.CLIENT_FEATURES.FileAPI && file){
 			FU.LoadFile({
 		        fileType: fileType,
 		        loadMechanism: FU.LOAD_MECHANISM.FILE,
@@ -316,6 +316,7 @@
 		}
 		else{
 			var remoteURL = CAM.GetPathFromFilename(assetName);
+			
 			
 			if(params.returnType && returnType === "url"){
 				callback(remoteURL);
